@@ -1,0 +1,22 @@
+const List<String> playersEasy = [
+  'Lionel Messi',
+  'Cristiano Ronaldo',
+  'Neymar Jr',
+  'Kylian Mbappé',
+  'Robert Lewandowski',
+  'Karim Benzema',
+  'Kevin De Bruyne',
+  'Luka Modrić',
+  'Erling Haaland',
+  'Mohamed Salah',
+  'Sadio Mané',
+  'Antoine Griezmann',
+  'Virgil Van Dijk',
+  'Gianluigi Donnarumma',
+  'Harry Kane',
+  'Luis Suárez',
+  'Sergio Ramos',
+  'Gerard Piqué',
+  'Jude Bellingham',
+  'Vinícius Jr'
+];
