@@ -10,74 +10,55 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  bool _showResult = false;
+  bool showSecret = false;
+  bool showImpostor = false;
 
   @override
   Widget build(BuildContext context) {
     final gc = Provider.of<GameController>(context);
+    const purple = Color(0xFF8A2BE2);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Resultado / Fin de ronda')),
+      appBar: AppBar(title: const Text('Resultado final'), backgroundColor: Colors.transparent),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() => _showResult = !_showResult);
-              },
-              child: Text(_showResult ? 'Ocultar resultado' : 'Mostrar resultado'),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Animación de mostrar/ocultar
-            AnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              crossFadeState: _showResult
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-              firstChild: Column(
-                children: [
-                  Text('Secreto de la ronda:',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        gc.secret,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text('Impostor:', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        gc.players[gc.impostorIndex].name,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ],
+            Card(
+              color: const Color(0xFF1A152E),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  children: [
+                    const Text('Secreto de la ronda', style: TextStyle(color: Color(0xFFC6C1D9))),
+                    const SizedBox(height: 8),
+                    Text(showSecret ? gc.secret : 'Oculto', style: TextStyle(color: showSecret ? purple : Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    ElevatedButton(onPressed: () => setState(() => showSecret = !showSecret), child: Text(showSecret ? 'Ocultar' : 'Revelar')),
+                  ],
+                ),
               ),
-              secondChild: Container(), // vacío cuando oculto
             ),
-
+            const SizedBox(height: 18),
+            Card(
+              color: const Color(0xFF1A152E),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  children: [
+                    const Text('Impostor', style: TextStyle(color: Color(0xFFC6C1D9))),
+                    const SizedBox(height: 8),
+                    Text(showImpostor ? gc.players[gc.impostorIndex].name : 'Oculto', style: TextStyle(color: showImpostor ? Colors.redAccent : Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    ElevatedButton(onPressed: () => setState(() => showImpostor = !showImpostor), child: Text(showImpostor ? 'Ocultar' : 'Revelar')),
+                  ],
+                ),
+              ),
+            ),
             const Spacer(),
-
-            ElevatedButton(
-              onPressed: () {
-                gc.reset();
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              child: const Text('Reiniciar partida'),
-            ),
+            ElevatedButton(onPressed: () { gc.reset(); Navigator.popUntil(context, (r) => r.isFirst); }, child: const Text('Nueva partida')),
           ],
         ),
       ),

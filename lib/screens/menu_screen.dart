@@ -90,11 +90,6 @@ class MenuScreen extends StatelessWidget {
                     onTap: () => game.setDifficulty(Difficulty.hard),
                   ),
                   _DifficultyButton(
-                    label: "Mixto",
-                    selected: game.difficulty == Difficulty.mixed,
-                    onTap: () => game.setDifficulty(Difficulty.mixed),
-                  ),
-                  _DifficultyButton(
                     label: "Todos",
                     selected: game.difficulty == Difficulty.all,
                     onTap: () => game.setDifficulty(Difficulty.all),
