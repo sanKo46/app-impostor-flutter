@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../controllers/game_controller.dart';
 
 class DifficultyScreen extends StatelessWidget {
-  final Function(String difficulty) onSelect;
+  final Function(Difficulty difficulty) onSelect;
 
   const DifficultyScreen({super.key, required this.onSelect});
 
@@ -13,22 +14,22 @@ class DifficultyScreen extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            _buildButton(context, "Fácil", "easy"),
+            _buildButton(context, "Fácil", Difficulty.easy),
             const SizedBox(height: 16),
-            _buildButton(context, "Medio", "medium"),
+            _buildButton(context, "Medio", Difficulty.medium),
             const SizedBox(height: 16),
-            _buildButton(context, "Difícil", "hard"),
+            _buildButton(context, "Difícil", Difficulty.hard),
             const SizedBox(height: 16),
-            _buildButton(context, "Libre (mezclado)", "mixed"),
+            _buildButton(context, "Libre (mezclado)", Difficulty.mixed),
             const SizedBox(height: 16),
-            _buildButton(context, "Todos ", "all"),
+            _buildButton(context, "Todos", Difficulty.all),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildButton(BuildContext ctx, String label, String value) {
+  Widget _buildButton(BuildContext ctx, String label, Difficulty value) {
     return ElevatedButton(
       onPressed: () => onSelect(value),
       child: Padding(

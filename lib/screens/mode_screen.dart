@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import 'reveal_screen.dart';
+import 'difficulty_screen.dart';
 
 class ModeScreen extends StatelessWidget {
   const ModeScreen({super.key});
@@ -9,6 +10,15 @@ class ModeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gc = Provider.of<GameController>(context);
+
+    void startGame() {
+      gc.assignRoles();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const RevealScreen()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Elegir modo')),
       body: Padding(
@@ -39,14 +49,27 @@ class ModeScreen extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                gc.assignRoles();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RevealScreen(playerIndex: 0)),
-                );
+                if (gc.mode == GameMode.jugador) {
+                  // PRIMERO pedir dificultad
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DifficultyScreen(
+                        onSelect: (difficulty) {
+                          gc.setDifficulty(difficulty);    // ← Guarda dificultad
+                          Navigator.pop(context);          // Vuelve al ModeScreen
+                          startGame();                     // Luego inicia partida
+                        },
+                      ),
+                    ),
+                  );
+                } else {
+                  // Otros modos no necesitan dificultad
+                  startGame();
+                }
               },
               child: const Text('Comenzar partida'),
-            )
+            ),
           ],
         ),
       ),

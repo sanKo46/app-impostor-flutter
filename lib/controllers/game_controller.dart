@@ -45,12 +45,12 @@ class GameController extends ChangeNotifier {
   }
 
   // ------------------------------
-  // POOL DE DATOS SEGÚN MODO + DIFICULTAD
+  // POOL SEGÚN MODO + DIFICULTAD
   // ------------------------------
   List<String> _getPool() {
     switch (mode) {
       case GameMode.jugador:
-        return _getPoolForPlayers();
+        return _getPlayerPool();
       case GameMode.words:
         return wordsList;
       case GameMode.balonoro:
@@ -60,7 +60,7 @@ class GameController extends ChangeNotifier {
     }
   }
 
-  List<String> _getPoolForPlayers() {
+  List<String> _getPlayerPool() {
     switch (difficulty) {
       case Difficulty.easy:
         return playersEasy;
@@ -88,21 +88,28 @@ class GameController extends ChangeNotifier {
     impostorIndex = _rng.nextInt(players.length);
 
     final pool = _getPool();
-    secret = pool[_rng.nextInt(pool.length)];
+    if (pool.isEmpty) {
+      secret = "ERROR: la base de datos está vacía";
+    } else {
+      secret = pool[_rng.nextInt(pool.length)];
+    }
 
     notifyListeners();
   }
 
   // ------------------------------
-  // REVELAR INFORMACIÓN
+  // REVELAR
   // ------------------------------
   String revealForIndex(int index) {
-    if (index == impostorIndex) return '¡Eres el impostor!';
-    return secret;
+    if (index == impostorIndex) {
+      return "❌ ¡Eres el IMPOSITOR!\nTu objetivo: confundir sin que te pillen gilipollas.";
+    }
+
+    return "La palabra/jugador/clúb común es:\n\n$secret";
   }
 
   // ------------------------------
-  // RESET TOTAL DEL JUEGO
+  // RESET
   // ------------------------------
   void reset() {
     secret = '';
