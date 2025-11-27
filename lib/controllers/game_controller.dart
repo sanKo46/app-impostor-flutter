@@ -9,12 +9,14 @@ import 'package:impostor_futbol/data/words_list.dart';
 import 'package:impostor_futbol/data/players_easy.dart';
 import 'package:impostor_futbol/data/players_medium.dart';
 import 'package:impostor_futbol/data/players_hard.dart';
-import 'package:impostor_futbol/data/players_mixed.dart';
+
+// CLUBES
+import 'package:impostor_futbol/data/clubs_mode.dart';
 
 import '../models/player.dart';
 
-enum GameMode { jugador, club, balonoro, words }
-enum Difficulty { easy, medium, hard, mixed, all }
+enum GameMode { jugador, club, balonoro, words, seleccion }
+enum Difficulty { easy, medium, hard, all }
 
 class GameController extends ChangeNotifier {
   List<Player> players = [];
@@ -51,10 +53,16 @@ class GameController extends ChangeNotifier {
     switch (mode) {
       case GameMode.jugador:
         return _getPlayerPool();
+
       case GameMode.words:
         return wordsList;
+
       case GameMode.balonoro:
         return balonOroData;
+
+      case GameMode.club:
+        return clubsMode; // ← MODO CLUBES
+
       default:
         return [];
     }
@@ -64,12 +72,13 @@ class GameController extends ChangeNotifier {
     switch (difficulty) {
       case Difficulty.easy:
         return playersEasy;
+
       case Difficulty.medium:
         return playersMedium;
+
       case Difficulty.hard:
         return playersHard;
-      case Difficulty.mixed:
-        return playersMixed;
+
       case Difficulty.all:
         return [
           ...playersEasy,
@@ -88,6 +97,7 @@ class GameController extends ChangeNotifier {
     impostorIndex = _rng.nextInt(players.length);
 
     final pool = _getPool();
+
     if (pool.isEmpty) {
       secret = "ERROR: la base de datos está vacía";
     } else {
@@ -102,10 +112,11 @@ class GameController extends ChangeNotifier {
   // ------------------------------
   String revealForIndex(int index) {
     if (index == impostorIndex) {
-      return "❌ ¡Eres el IMPOSITOR!\nTu objetivo: confundir sin que te pillen gilipollas.";
+      return "❌ ¡Eres el IMPOSTOR!\n"
+          "Tu objetivo: confundir sin que te pillen gillipollas.";
     }
 
-    return "La palabra/jugador/balon de oro en común es:\n\n$secret";
+    return "\n$secret";
   }
 
   // ------------------------------
@@ -114,7 +125,6 @@ class GameController extends ChangeNotifier {
   void resetGame() {
     secret = '';
     impostorIndex = -1;
-    // players se mantiene
     notifyListeners();
   }
 }

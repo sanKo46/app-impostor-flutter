@@ -28,6 +28,10 @@ class ModeScreen extends StatelessWidget {
             _optionTile(context, 'Palabras', 'Modo palabras aleatorias', Icons.shield, gc.mode == GameMode.words, () => gc.setMode(GameMode.words)),
             const SizedBox(height: 10),
             _optionTile(context, 'Balón de Oro', 'Año del Balón de Oro', Icons.emoji_events, gc.mode == GameMode.balonoro, () => gc.setMode(GameMode.balonoro)),
+            const SizedBox(height: 10),
+            _optionTile(context, 'Clubes', 'Modo clubes de fútbol', Icons.sports_soccer, gc.mode == GameMode.club, () => gc.setMode(GameMode.club)),
+            const SizedBox(height: 10),
+            _optionTile(context, 'Selecciones', 'Modo de selecciones', Icons.flag, gc.mode == GameMode.seleccion, () => gc.setMode(GameMode.seleccion)),
             const Spacer(),
             if (gc.mode == GameMode.jugador) ...[
               Row(
