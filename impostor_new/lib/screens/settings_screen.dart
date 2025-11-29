@@ -41,23 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _settingsTile(
-                icon: Icons.restart_alt,
-                title: 'Reiniciar partida',
-                subtitle: 'Elimina roles, modo y resultados',
-                color: purple,
-                onTap: () {
-                  game.resetGame();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text("Partida reiniciada."),
-                      backgroundColor: purple,
-                    ),
-                  );
-                },
-              ),
               const SizedBox(height: 16),
-
               _settingsTile(
                 icon: Icons.info_outline,
                 title: 'Información',
@@ -76,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                       content: const Text(
-                        'Impostor Fútbol es un juego social donde un jugador es '
+                        'Impostor de fútbol es un juego donde un jugador es '
                         'el impostor y debe adivinar la categoría mientras los '
                         'demás intentan confundirse entre sí.',
                         style: TextStyle(color: Colors.white70),
@@ -96,7 +80,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _settingsTile(
                 icon: Icons.code,
                 title: 'Créditos',
-                subtitle: 'Desarrollado por Ti',
+                subtitle: 'Desarrollado por sanko',
                 color: purple,
                 onTap: () {},
               ),
@@ -106,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               Center(
                 child: Text(
-                  "Versión 1.0.0",
+                  "Versión 1.0.1",
                   style: TextStyle(color: Colors.white.withOpacity(0.4)),
                 ),
               ),
