@@ -3,98 +3,157 @@ import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import 'result_screen.dart';
 
-class RevealScreen extends StatefulWidget {
-  final int playerIndex;
-  const RevealScreen({super.key, required this.playerIndex});
+class RevealFlowScreen extends StatefulWidget {
+  const RevealFlowScreen({super.key});
 
   @override
-  State<RevealScreen> createState() => _RevealScreenState();
+  State<RevealFlowScreen> createState() => _RevealFlowScreenState();
 }
 
-class _RevealScreenState extends State<RevealScreen> {
-  late int _currentIndex;
-  bool _revealed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.playerIndex;
-  }
-
-  void _toggleReveal() => setState(() => _revealed = !_revealed);
-
-  void _next(BuildContext context) {
-    final gc = Provider.of<GameController>(context, listen: false);
-    setState(() => _revealed = false);
-    final next = _currentIndex + 1;
-    if (next >= gc.players.length) {
-      Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => const ResultScreen(), transitionsBuilder: (_, anim, __, child) => FadeTransition(opacity: anim, child: child)));
-      return;
-    }
-    Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, __, ___) => RevealScreen(playerIndex: next), transitionsBuilder: (_, anim, __, child) => FadeTransition(opacity: anim, child: child)));
-  }
+class _RevealFlowScreenState extends State<RevealFlowScreen> {
+  int index = 0;
+  bool revealed = false;
 
   @override
   Widget build(BuildContext context) {
-    final gc = Provider.of<GameController>(context);
+    final gc = context.watch<GameController>();
     const purple = Color(0xFF8A2BE2);
 
-    if (_currentIndex >= gc.players.length) {
-      return Scaffold(body: Center(child: Text('Índice fuera de rango', style: TextStyle(color: Colors.white))));
-    }
-
-    final playerName = gc.players[_currentIndex].name;
-    final revealText = gc.revealForIndex(_currentIndex);
+    final player = gc.players[index].name;
+    final text = gc.revealForIndex(index);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Revelación'), backgroundColor: Colors.transparent),
-      body: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          children: [
-            const SizedBox(height: 6),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 280),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A152E),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [BoxShadow(color: purple.withOpacity(0.06), blurRadius: 12)],
+      backgroundColor: const Color(0xFF0D0A1A),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // -------------------------
+              // NOMBRE DEL JUGADOR
+              // -------------------------
+              Text(
+                "Jugador ${index + 1}/${gc.players.length}",
+                style: const TextStyle(color: Colors.white54, fontSize: 18),
               ),
-              child: Column(
-                children: [
-                  Text('Turno de: $playerName', style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 140,
-                    child: Center(
-                      child: _revealed
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(revealText, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 8),
-                                if (gc.impostorIndex == _currentIndex)
-                                  const Text('¡Eres el impostor!', style: TextStyle(color: Colors.redAccent)),
-                              ],
-                            )
-                          : Icon(Icons.lock, size: 64, color: purple.withOpacity(0.9)),
+              const SizedBox(height: 8),
+              Text(
+                player,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 34,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 35),
+
+              // -------------------------
+              // TARJETA REVELADA / OCULTA
+              // -------------------------
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(26),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A152E),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: revealed ? purple : purple.withOpacity(0.15),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 20,
+                      color: revealed ? purple.withOpacity(0.5) : Colors.transparent,
+                    ),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: revealed
+                      ? Column(
+                          key: ValueKey("revealed_$index"), // ✔ key única por jugador
+                          children: [
+                            Text(
+                              text,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 26,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            if (gc.impostorIndex == index)
+                              const Text(
+                                "¡Eres el impostor!",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 18,
+                                ),
+                              ),
+                          ],
+                        )
+                      : Icon(
+                          Icons.lock,
+                          key: ValueKey("hidden_$index"), // ✔ key única por jugador
+                          size: 80,
+                          color: Colors.white30,
+                        ),
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              // -------------------------
+              // BOTÓN
+              // -------------------------
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: purple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                ],
+                  onPressed: () {
+                    // Mostrar rol
+                    if (!revealed) {
+                      setState(() => revealed = true);
+                      return;
+                    }
+
+                    // Siguiente jugador
+                    if (index + 1 >= gc.players.length) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ResultScreen(),
+                        ),
+                      );
+                    } else {
+                      setState(() {
+                        index++;
+                        revealed = false;
+                      });
+                    }
+                  },
+                  child: Text(
+                    revealed ? "Siguiente jugador" : "Revelar",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: ElevatedButton(onPressed: _toggleReveal, child: Text(_revealed ? 'Ocultar' : 'Revelar'))),
-                const SizedBox(width: 12),
-                Expanded(child: OutlinedButton(onPressed: () => _next(context), child: const Text('Siguiente jugador'))),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text('Jugador ${_currentIndex + 1} de ${gc.players.length}', style: const TextStyle(color: Color(0xFFC6C1D9))),
-          ],
+            ],
+          ),
         ),
       ),
     );

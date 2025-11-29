@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:impostor_futbol/controllers/language_controller.dart';
 import 'package:provider/provider.dart';
 import 'controllers/game_controller.dart';
 import 'controllers/theme_controller.dart';
@@ -10,6 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeController()),
         ChangeNotifierProvider(create: (_) => GameController()),
+        ChangeNotifierProvider(create: (_) => LanguageController()),
       ],
       child: const MyApp(),
     ),
