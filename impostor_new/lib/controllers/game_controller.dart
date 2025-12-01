@@ -116,8 +116,7 @@ class GameController extends ChangeNotifier {
   // ------------------------------
   String revealForIndex(int index) {
     if (index == impostorIndex) {
-      return "❌ ¡Eres el IMPOSTOR!\n"
-          "Tu objetivo: confundir sin que te pillen gillipollas.";
+      return "❌ ¡Eres el IMPOSTOR!";
     }
 
     return "\n$secret";
