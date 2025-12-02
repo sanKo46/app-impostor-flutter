@@ -83,7 +83,7 @@ class _RevealFlowScreenState extends State<RevealFlowScreen> {
                             const SizedBox(height: 10),
                             if (gc.impostorIndex == index)
                               const Text(
-                                "¡Eres el impostor!",
+                                "¡Ten cuidado!",
                                 style: TextStyle(
                                   color: Colors.redAccent,
                                   fontStyle: FontStyle.italic,
