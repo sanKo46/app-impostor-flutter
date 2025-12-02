@@ -47,111 +47,133 @@ class _RevealFlowScreenState extends State<RevealFlowScreen> {
               ),
               const SizedBox(height: 35),
 
-              // TARJETA REVELADA / OCULTA CON SWIPE
-              GestureDetector(
-                onVerticalDragUpdate: (details) {
-                  setState(() {
-                    if (details.delta.dy < -20) revealed = true; // swipe up
-                    if (details.delta.dy > 20) revealed = false; // swipe down
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.all(26),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A152E),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: revealed ? purple : purple.withOpacity(0.15),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 20,
-                        color: revealed ? purple.withOpacity(0.5) : Colors.transparent,
-                      ),
-                    ],
+              // TARJETA REVELADA / OCULTA
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(26),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A152E),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: revealed ? purple : purple.withOpacity(0.15),
+                    width: 2,
                   ),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: revealed
-                        ? Column(
-                            key: ValueKey("revealed_$index"),
-                            children: [
-                              Text(
-                                text,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 26,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 20,
+                      color: revealed ? purple.withOpacity(0.5) : Colors.transparent,
+                    ),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: revealed
+                      ? Column(
+                          key: ValueKey("revealed_$index"),
+                          children: [
+                            Text(
+                              text,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 26,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            if (gc.impostorIndex == index)
+                              const Text(
+                                "¡Eres el impostor!",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 18,
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              if (gc.impostorIndex == index)
-                                const Text(
-                                  "¡Eres el impostor!",
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                            ],
-                          )
-                        : Icon(
-                            Icons.lock,
-                            key: ValueKey("hidden_$index"),
-                            size: 80,
-                            color: Colors.white30,
-                          ),
-                  ),
+                          ],
+                        )
+                      : Icon(
+                          Icons.lock,
+                          key: ValueKey("hidden_$index"),
+                          size: 80,
+                          color: Colors.white30,
+                        ),
                 ),
               ),
 
               const SizedBox(height: 40),
 
-              // BOTÓN SIGUIENTE
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (index + 1 >= gc.players.length) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ResultScreen(),
+              Row(
+                children: [
+                  // BOTÓN IZQUIERDO — REVELAR / OCULTAR
+                  Expanded(
+                    child: SizedBox(
+                      height: 55,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: purple.withOpacity(0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
-                      );
-                    } else {
-                      setState(() {
-                        index++;
-                        revealed = false;
-                      });
-                    }
-                  },
-                  child: const Text(
-                    "Siguiente jugador",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                        onPressed: () {
+                          setState(() => revealed = !revealed);
+                        },
+                        child: Text(
+                          revealed ? "Ocultar" : "Revelar",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "⬆ Desliza hacia arriba para revelar / ⬇ para ocultar",
-                style: TextStyle(color: Colors.white38, fontSize: 14),
-              ),
+
+                  const SizedBox(width: 15),
+
+                  // BOTÓN DERECHO — SIGUIENTE
+                  Expanded(
+                    child: SizedBox(
+                      height: 55,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: purple,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!revealed) return;
+
+                          if (index + 1 >= gc.players.length) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ResultScreen(),
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              index++;
+                              revealed = false;
+                            });
+                          }
+                        },
+                        child: const Text(
+                          "Siguiente",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
